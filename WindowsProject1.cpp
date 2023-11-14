@@ -34,6 +34,7 @@ int CellSize = 20; // width (and height) in pixels of each cell
 int WindowSize = 800; // width (and height) of (square) window
 int TableSize = WindowSize/CellSize; // number of cells that fit in the width of the window
 int Table[1000][1000];
+int OLDTable[1000][1000];
 
 
 void InitializeVariables()
@@ -41,38 +42,53 @@ void InitializeVariables()
     srand(time(NULL)); // randomize seed for random numbers
     for (int i = 0; i < 1000; i++)
         for (int j = 0; j < 1000; j++)
-            Table[i][j] = 0;
-    Table[1][0] = 1;
-    Table[0][2] = 1;
+            if (rand() % 3 == 0)
+            {
+                Table[i][j] = 1;
+            }
+            else
+            {
+                Table[i][j] = 0;
+            }
 }
 
 int CountNeighbours(int x, int y)
 {
     int n = 0;
-    if (Table[x][y + 1] == 1) n++;
-    if (Table[x + 1][y + 1] == 1) n++;
-    if (Table[x + 1][y] == 1) n++;
+    if (OLDTable[x][y + 1] == 1) n++;
+    if (OLDTable[x + 1][y + 1] == 1) n++;
+    if (OLDTable[x + 1][y] == 1) n++;
     if (x > 1)
     {
-        if (Table[x - 1][y + 1] == 1) n++;
-        if (Table[x - 1][y] == 1) n++;
+        if (OLDTable[x - 1][y + 1] == 1) n++;
+        if (OLDTable[x - 1][y] == 1) n++;
     }
     if (y > 1)
     {
-        if (Table[x][y - 1] == 1) n++;
-        if (Table[x+1][y-1] == 1) n++;
+        if (OLDTable[x][y - 1] == 1) n++;
+        if (OLDTable[x+1][y-1] == 1) n++;
     }
     if ( (x > 1) && (y > 1) )
     {
-        if (Table[x - 1][y - 1] == 1) n++;
+        if (OLDTable[x - 1][y - 1] == 1) n++;
     }
     return n;
 }
 
 void UpdateTable()
 {
-    Table[3][3] = 1;
+    for (int i = 0; i < 1000; i++)
+        for (int j = 0; j < 1000; j++)
+            OLDTable[i][j] = Table[i][j];
+    for (int i = 0; i < 1000; i++)
+        for (int j = 0; j < 1000; j++)
+        {
+            if (CountNeighbours(i, j) >= 4) { Table[i][j] = 0; }
+            if (CountNeighbours(i, j) == 3) { Table[i][j] = 1; }
+            if (CountNeighbours(i, j) <= 1 ) { Table[i][j] = 0; }
+        }
 }
+
 
 
 void RefreshWindow(HWND hWnd)
@@ -88,8 +104,18 @@ void DrawCell(HDC hdc, int x, int y)
     HBRUSH hBrush;
     RECT rect;
     int r1, r2, r3;
-    r1 = rand(); r2 = rand(); r3 = rand();
+    r1 = rand() % 256; r2 = rand() % 256; r3 = rand() % 256;
     hBrush = CreateSolidBrush(RGB(r1, r2, r3));
+    SetRect(&rect, x * CellSize, y * CellSize, x * CellSize + CellSize, y * CellSize + CellSize);
+    FillRect(hdc, &rect, hBrush);
+    DeleteObject(hBrush);
+}
+
+void DrawCellWhite(HDC hdc, int x, int y)
+{
+    HBRUSH hBrush;
+    RECT rect;
+    hBrush = CreateSolidBrush(RGB(255, 255, 255));
     SetRect(&rect, x * CellSize, y * CellSize, x * CellSize + CellSize, y * CellSize + CellSize);
     FillRect(hdc, &rect, hBrush);
     DeleteObject(hBrush);
@@ -97,11 +123,15 @@ void DrawCell(HDC hdc, int x, int y)
 
 void DrawTable(HDC hdc)
 {
-  for (int i = 0; i < 1000; i++)
-        for (int j = 0; j < 1000; j++)
+  for (int i = 0; i < TableSize; i++)
+        for (int j = 0; j < TableSize; j++)
             if (Table[i][j] == 1)
             {
                 DrawCell(hdc, i, j);
+            }
+            else
+            {
+                DrawCellWhite(hdc, i, j);
             }
 }
 
