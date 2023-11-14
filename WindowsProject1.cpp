@@ -1,7 +1,8 @@
 // WindowsProject1.cpp : Defines the entry point for the application.
 //
 
-/* Conway's genetic laws are delightfully simple. First note that each cell of the checkerboard 
+/* From the book "101 Basic Games" 
+Conway's genetic laws are delightfully simple. First note that each cell of the checkerboard 
 (assumed to be an infinite plane) has eight neighboring cells, four adjacent orthogonally, four adjacent diagonally. 
 The rules are:  
 
@@ -43,6 +44,43 @@ void InitializeVariables()
             Table[i][j] = 0;
     Table[1][0] = 1;
     Table[0][2] = 1;
+}
+
+int CountNeighbours(int x, int y)
+{
+    int n = 0;
+    if (Table[x][y + 1] == 1) n++;
+    if (Table[x + 1][y + 1] == 1) n++;
+    if (Table[x + 1][y] == 1) n++;
+    if (x > 1)
+    {
+        if (Table[x - 1][y + 1] == 1) n++;
+        if (Table[x - 1][y] == 1) n++;
+    }
+    if (y > 1)
+    {
+        if (Table[x][y - 1] == 1) n++;
+        if (Table[x+1][y-1] == 1) n++;
+    }
+    if ( (x > 1) && (y > 1) )
+    {
+        if (Table[x - 1][y - 1] == 1) n++;
+    }
+    return n;
+}
+
+void UpdateTable()
+{
+    Table[3][3] = 1;
+}
+
+
+void RefreshWindow(HWND hWnd)
+{
+    RECT rect;
+    SetRect(&rect, 0, 0, WindowSize, WindowSize);
+    InvalidateRect(hWnd, &rect, FALSE);  // tell windows to re-paint our window (update screen)
+    UpdateWindow(hWnd);
 }
 
 void DrawCell(HDC hdc, int x, int y)
@@ -210,16 +248,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
      {
        case TIMER_RAY1:
         {
-           Table[20][20] = 1;
-           Table[21][21] = 1;
+           UpdateTable();
         }
         break; // jump out of switch block
      }
     // finally, update the screen
-    RECT rect;
-    SetRect(&rect, 0, 0, WindowSize, WindowSize);
-    InvalidateRect(hWnd, &rect, FALSE);  // tell windows to re-paint our window (update screen)
-    UpdateWindow(hWnd);
+     RefreshWindow(hWnd);
     }
     case WM_PAINT:
         {
