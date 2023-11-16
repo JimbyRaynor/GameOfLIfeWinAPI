@@ -32,7 +32,7 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
 int CellSize = 20; // width (and height) in pixels of each cell
 int WindowSize = 800; // width (and height) of (square) window
-int TableSize = WindowSize/CellSize; // number of cells that fit in the width of the window
+int TableSize = WindowSize/CellSize-2; // number of cells that fit in the width of the window
 int Table[1000][1000];
 int OLDTable[1000][1000];
 
@@ -40,8 +40,8 @@ int OLDTable[1000][1000];
 void InitializeVariables()
 {
     srand(time(NULL)); // randomize seed for random numbers
-    for (int i = 0; i < 1000; i++)
-        for (int j = 0; j < 1000; j++)
+    for (int i = 0; i < TableSize; i++)
+        for (int j = 0; j < TableSize-3; j++)
             if (rand() % 3 == 0)
             {
                 Table[i][j] = 1;
@@ -77,11 +77,11 @@ int CountNeighbours(int x, int y)
 
 void UpdateTable()
 {
-    for (int i = 0; i < 1000; i++)
-        for (int j = 0; j < 1000; j++)
+    for (int i = 0; i < TableSize; i++)
+        for (int j = 0; j < TableSize; j++)
             OLDTable[i][j] = Table[i][j];
-    for (int i = 0; i < 1000; i++)
-        for (int j = 0; j < 1000; j++)
+    for (int i = 0; i < TableSize; i++)
+        for (int j = 0; j < TableSize; j++)
         {
             if (CountNeighbours(i, j) >= 4) { Table[i][j] = 0; }
             if (CountNeighbours(i, j) == 3) { Table[i][j] = 1; }
