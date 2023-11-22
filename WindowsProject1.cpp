@@ -18,6 +18,8 @@ The rules are:
    of the initial configuration
 */
 
+// Make menu   ... VERY Easy, just double click on Resorce File .rc and click on Menu. An IDE appears for adding to the menu.
+
 #include "framework.h"
 #include "WindowsProject1.h"
 #include <ctime>
@@ -37,8 +39,17 @@ int Table[1000][1000];
 int OLDTable[1000][1000];
 
 
-void InitializeVariables()
+void ClearTable()
 {
+    for (int i = 0; i < TableSize; i++)
+        for (int j = 0; j < TableSize; j++)
+            Table[i][j] = 0;
+}
+
+
+void  RandomPattern()
+{
+    ClearTable();
     srand(time(NULL)); // randomize seed for random numbers
     for (int i = 0; i < TableSize; i++)
         for (int j = 0; j < TableSize-3; j++)
@@ -50,6 +61,26 @@ void InitializeVariables()
             {
                 Table[i][j] = 0;
             }
+}
+
+void TypeIPattern()
+{
+    ClearTable();
+    for (int i = 0; i < TableSize - 3; i++)
+    {
+      Table[i][i] = 1;
+      Table[i][i+1] = 1;
+    }
+}
+
+void TypeIIPattern()
+{
+    ClearTable();
+    for (int i = 0; i < TableSize - 3; i++)
+    {
+        Table[i][i] = 1;
+        Table[i+3][i] = 1;
+    }
 }
 
 int CountNeighbours(int x, int y)
@@ -261,6 +292,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case IDM_EXIT:
             DestroyWindow(hWnd);
             break;
+        case ID_FILE_TYPEI:
+            TypeIPattern();
+            break;
+        case ID_FILE_TYPEII:
+            TypeIIPattern();
+            break;
+        case ID_FILE_RANDOM:
+            RandomPattern();
+            break;
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
@@ -268,7 +308,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     break;
     case WM_CREATE:
          {
-         InitializeVariables();
+         RandomPattern();
          SetTimer(hWnd, TIMER_RAY1, 400, NULL); // calls TIMER_RAY1 every 400 milliseconds
          }
          break;
