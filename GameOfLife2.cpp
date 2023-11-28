@@ -37,14 +37,15 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 int CellSize = 20; // width (and height) in pixels of each cell
 int WindowSize = 800; // width (and height) of (square) window
 int TableSize = WindowSize / CellSize - 2; // number of cells that fit in the width of the window
+int msWait = 400; // medium speed
 int Table[1000][1000];
 int OLDTable[1000][1000];
 
 
 void ClearTable()
 {
-    for (int i = 0; i < TableSize; i++)
-        for (int j = 0; j < TableSize; j++)
+    for (int i = 0; i < 1000; i++)
+        for (int j = 0; j < 1000; j++)
             Table[i][j] = 0;
 }
 
@@ -304,6 +305,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case ID_FILE_RANDOM:
             RandomPattern();
             break;
+        case ID_CELLSIZE_TINY:
+            CellSize = 5;
+            TableSize = WindowSize / CellSize - 2;
+            break;
+        case ID_CELLSIZE_SMALL:
+            CellSize = 10;
+            TableSize = WindowSize / CellSize - 2;
+            break;
+        case ID_CELLSIZE_MEDIUM:
+            CellSize = 20;
+            TableSize = WindowSize / CellSize - 2;
+            break;
+        case ID_CELLSIZE_LARGE:
+            CellSize = 40;
+            TableSize = WindowSize / CellSize - 2;
+            break;
+        case ID_SPEED_SLOW:
+            msWait = 2000;
+            SetTimer(hWnd, TIMER_RAY1, msWait, NULL);
+            break;
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
@@ -312,7 +333,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
     {
         RandomPattern();
-        SetTimer(hWnd, TIMER_RAY1, 400, NULL); // calls TIMER_RAY1 every 400 milliseconds
+        SetTimer(hWnd, TIMER_RAY1, msWait, NULL); // calls TIMER_RAY1 every 400 milliseconds
     }
     break;
     case WM_TIMER: // use this to move characters and finally update the screen
