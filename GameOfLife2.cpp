@@ -322,7 +322,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             TableSize = WindowSize / CellSize - 2;
             break;
         case ID_SPEED_SLOW:
+            KillTimer(hWnd, TIMER_RAY1);
             msWait = 2000;
+            SetTimer(hWnd, TIMER_RAY1, msWait, NULL);
+            break;
+        case ID_SPEED_MEDIUM:
+            KillTimer(hWnd, TIMER_RAY1);
+            msWait = 500;
+            SetTimer(hWnd, TIMER_RAY1, msWait, NULL);
+            break;
+        case ID_SPEED_FAST:
+            KillTimer(hWnd, TIMER_RAY1);
+            msWait = 50;
             SetTimer(hWnd, TIMER_RAY1, msWait, NULL);
             break;
         default:
@@ -358,6 +369,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     break;
     case WM_DESTROY:
+        KillTimer(hWnd, TIMER_RAY1);
         PostQuitMessage(0);
         break;
     default:
