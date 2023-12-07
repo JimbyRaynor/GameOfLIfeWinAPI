@@ -25,6 +25,10 @@ The rules are:
 #include "framework.h"
 #include "GameOfLife2.h"
 #include <ctime>
+#include <vector>
+#include <string>
+
+using namespace std;
 
 #define MAX_LOADSTRING 100
 #define TIMER_RAY1 1 // use a different number for each timer 
@@ -40,7 +44,7 @@ int TableSize = WindowSize / CellSize - 2; // number of cells that fit in the wi
 int msWait = 400; // medium speed
 int Table[1000][1000];
 int OLDTable[1000][1000];
-
+vector <string> PatternVector = {"*"};
 
 void ClearTable()
 {
@@ -49,6 +53,24 @@ void ClearTable()
             Table[i][j] = 0;
 }
 
+void CreatePattern()
+{
+    string mystring;
+    ClearTable();
+    for (int i = 0; i < PatternVector.size(); i++)
+        for (int j = 0; j < PatternVector[i].size(); j++)
+        {
+            mystring = PatternVector[i];
+            if (mystring[j] == ' ')
+            {
+                Table[j+TableSize/2][i + TableSize / 2] = 0;
+            }
+            else
+            {
+                Table[j + TableSize / 2][i + TableSize / 2] = 1;
+            }
+        }
+}
 
 void  RandomPattern()
 {
@@ -85,6 +107,18 @@ void TypeIIPattern()
         Table[i + 3][i] = 1;
     }
 }
+
+void TypeIIIPattern()
+{
+    PatternVector.clear();
+    PatternVector = { 
+        "****", 
+        "* **", 
+        "*  *",
+        "****"};
+    CreatePattern();
+}
+
 
 int CountNeighbours(int x, int y)
 {
@@ -298,12 +332,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         case ID_FILE_TYPEI:
             TypeIPattern();
+            RefreshWindow(hWnd);
             break;
         case ID_FILE_TYPEII:
             TypeIIPattern();
+            RefreshWindow(hWnd);
+            break;
+        case ID_PATTERN_TYPEIII:
+            TypeIIIPattern();
+            RefreshWindow(hWnd);
             break;
         case ID_FILE_RANDOM:
             RandomPattern();
+            RefreshWindow(hWnd);
             break;
         case ID_CELLSIZE_TINY:
             CellSize = 5;
@@ -323,7 +364,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         case ID_SPEED_SLOW:
             KillTimer(hWnd, TIMER_RAY1);
-            msWait = 2000;
+            msWait = 8000;
             SetTimer(hWnd, TIMER_RAY1, msWait, NULL);
             break;
         case ID_SPEED_MEDIUM:
