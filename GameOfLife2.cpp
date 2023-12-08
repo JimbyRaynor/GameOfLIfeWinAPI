@@ -112,13 +112,45 @@ void TypeIIIPattern()
 {
     PatternVector.clear();
     PatternVector = { 
-        "****", 
-        "* **", 
-        "*  *",
-        "****"};
+        " ** ", 
+        "*   ", 
+        "   *",
+        " ** "};
     CreatePattern();
 }
 
+void TypeIVPattern()
+{
+    PatternVector.clear();
+    PatternVector = {
+        "** ",
+        "*   ",
+        "   *",
+        "  **" };
+    CreatePattern();
+}
+
+void TypeVPattern()
+{
+    PatternVector.clear();
+    PatternVector = {
+        "  * ",
+        "* * ",
+        " * *",
+        " *  " };
+    CreatePattern();
+}
+
+void TypeVIPattern()
+{
+    PatternVector.clear();
+    PatternVector = {
+        "  *",
+        "* *",
+        " **" 
+    };
+    CreatePattern();
+}
 
 int CountNeighbours(int x, int y)
 {
@@ -340,6 +372,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         case ID_PATTERN_TYPEIII:
             TypeIIIPattern();
+            RefreshWindow(hWnd);
+            break;
+        case ID_PATTERN_TYPEIV:
+            TypeIVPattern();
+            RefreshWindow(hWnd);
+            break;
+        case ID_PATTERN_TYPEV:
+            TypeVPattern();
+            RefreshWindow(hWnd);
+            break;
+        case ID_PATTERN_TYPEVI:
+            TypeVIPattern();
             RefreshWindow(hWnd);
             break;
         case ID_FILE_RANDOM:
