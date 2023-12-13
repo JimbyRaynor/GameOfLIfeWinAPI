@@ -44,6 +44,10 @@ int TableSize = WindowSize / CellSize - 2; // number of cells that fit in the wi
 int msWait = 400; // medium speed
 int Table[1000][1000];
 int OLDTable[1000][1000];
+int iMenuCELLSIZESelection = ID_CELLSIZE_MEDIUM;  // the number of the selected menu item for CELLSIZE
+int iMenuPATTERNSelection = ID_PATTERN_RANDOM;  // the number of the selected menu item for PATTERN
+int iMenuSPEEDSelection = ID_SPEED_MEDIUM;  // the number of the selected menu item for PATTERN
+bool ClearTheScreenFlag = false;
 vector <string> PatternVector = {"*"};
 
 void ClearTable()
@@ -196,7 +200,7 @@ void RefreshWindow(HWND hWnd)
     RECT rect;
     SetRect(&rect, 0, 0, WindowSize, WindowSize);
     InvalidateRect(hWnd, &rect, FALSE);  // tell windows to re-paint our window (update screen)
-    UpdateWindow(hWnd);
+    UpdateWindow(hWnd); // call WM_PAINT
 }
 
 void DrawCell(HDC hdc, int x, int y)
@@ -221,6 +225,17 @@ void DrawCellWhite(HDC hdc, int x, int y)
     DeleteObject(hBrush);
 }
 
+void ClearScreen(HDC hdc, HWND hwnd)
+{
+    HBRUSH hBrush;
+    RECT rect;
+    hBrush = CreateSolidBrush(RGB(255, 255, 255));
+    GetClientRect(hwnd, &rect);
+    FillRect(hdc, &rect, hBrush);
+    DeleteObject(hBrush);
+}
+
+
 void DrawTable(HDC hdc)
 {
     for (int i = 0; i < TableSize; i++)
@@ -234,6 +249,14 @@ void DrawTable(HDC hdc)
                 DrawCellWhite(hdc, i, j);
             }
 }
+
+void UpDateMenuCheck(HMENU hMenu, int &i, int myID)
+{
+    CheckMenuItem(hMenu, i, MF_UNCHECKED);
+    i = myID;
+    CheckMenuItem(hMenu, i, MF_CHECKED);
+}
+
 
 
 // Forward declarations of functions included in this code module:
@@ -348,6 +371,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    HMENU hMenu;
+    hMenu = GetMenu(hWnd);
     switch (message)
     {
     case WM_COMMAND:
@@ -362,64 +387,86 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case IDM_EXIT:
             DestroyWindow(hWnd);
             break;
-        case ID_FILE_TYPEI:
+        case ID_PATTERN_TYPEI:
             TypeIPattern();
             RefreshWindow(hWnd);
+            UpDateMenuCheck(hMenu, iMenuPATTERNSelection, wmId);
             break;
-        case ID_FILE_TYPEII:
+        case ID_PATTERN_TYPEII:
             TypeIIPattern();
             RefreshWindow(hWnd);
+            UpDateMenuCheck(hMenu, iMenuPATTERNSelection, wmId);
             break;
         case ID_PATTERN_TYPEIII:
             TypeIIIPattern();
             RefreshWindow(hWnd);
+            UpDateMenuCheck(hMenu, iMenuPATTERNSelection, wmId);
             break;
         case ID_PATTERN_TYPEIV:
             TypeIVPattern();
             RefreshWindow(hWnd);
+            UpDateMenuCheck(hMenu, iMenuPATTERNSelection, wmId);
             break;
         case ID_PATTERN_TYPEV:
             TypeVPattern();
             RefreshWindow(hWnd);
+            UpDateMenuCheck(hMenu, iMenuPATTERNSelection, wmId);
             break;
         case ID_PATTERN_TYPEVI:
             TypeVIPattern();
             RefreshWindow(hWnd);
+            UpDateMenuCheck(hMenu, iMenuPATTERNSelection, wmId);
             break;
-        case ID_FILE_RANDOM:
+        case ID_PATTERN_RANDOM:
             RandomPattern();
             RefreshWindow(hWnd);
+            UpDateMenuCheck(hMenu, iMenuPATTERNSelection, wmId);
             break;
         case ID_CELLSIZE_TINY:
             CellSize = 5;
             TableSize = WindowSize / CellSize - 2;
+            ClearTheScreenFlag = true;
+            RefreshWindow(hWnd);
+            UpDateMenuCheck(hMenu, iMenuCELLSIZESelection, wmId);
             break;
         case ID_CELLSIZE_SMALL:
             CellSize = 10;
             TableSize = WindowSize / CellSize - 2;
+            ClearTheScreenFlag = true;
+            RefreshWindow(hWnd);
+            UpDateMenuCheck(hMenu, iMenuCELLSIZESelection, wmId);
             break;
         case ID_CELLSIZE_MEDIUM:
             CellSize = 20;
             TableSize = WindowSize / CellSize - 2;
+            ClearTheScreenFlag = true;
+            RefreshWindow(hWnd);
+            UpDateMenuCheck(hMenu, iMenuCELLSIZESelection, wmId);
             break;
         case ID_CELLSIZE_LARGE:
             CellSize = 40;
             TableSize = WindowSize / CellSize - 2;
+            ClearTheScreenFlag = true;
+            RefreshWindow(hWnd);
+            UpDateMenuCheck(hMenu, iMenuCELLSIZESelection, wmId);
             break;
         case ID_SPEED_SLOW:
             KillTimer(hWnd, TIMER_RAY1);
             msWait = 8000;
             SetTimer(hWnd, TIMER_RAY1, msWait, NULL);
+            UpDateMenuCheck(hMenu, iMenuSPEEDSelection, wmId);
             break;
         case ID_SPEED_MEDIUM:
             KillTimer(hWnd, TIMER_RAY1);
             msWait = 500;
             SetTimer(hWnd, TIMER_RAY1, msWait, NULL);
+            UpDateMenuCheck(hMenu, iMenuSPEEDSelection, wmId);
             break;
         case ID_SPEED_FAST:
             KillTimer(hWnd, TIMER_RAY1);
             msWait = 50;
             SetTimer(hWnd, TIMER_RAY1, msWait, NULL);
+            UpDateMenuCheck(hMenu, iMenuSPEEDSelection, wmId);
             break;
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
@@ -430,6 +477,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         RandomPattern();
         SetTimer(hWnd, TIMER_RAY1, msWait, NULL); // calls TIMER_RAY1 every 400 milliseconds
+        CheckMenuItem(hMenu, iMenuCELLSIZESelection, MF_CHECKED);
+        CheckMenuItem(hMenu, iMenuPATTERNSelection, MF_CHECKED);
+        CheckMenuItem(hMenu, iMenuSPEEDSelection, MF_CHECKED);
     }
     break;
     case WM_TIMER: // use this to move characters and finally update the screen
@@ -443,12 +493,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break; // jump out of switch block
         }
         // finally, update the screen
-        RefreshWindow(hWnd);
+        RefreshWindow(hWnd); // call WM_PAINT
     }
     case WM_PAINT:
     {
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
+        if (ClearTheScreenFlag == true) 
+         { ClearScreen(hdc, hWnd);
+           ClearTheScreenFlag = false;
+         }
         DrawTable(hdc);
         EndPaint(hWnd, &ps);
     }
