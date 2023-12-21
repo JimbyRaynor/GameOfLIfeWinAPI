@@ -2,7 +2,10 @@
 //
 
 
-/* From the book "101 Basic Games"
+/* From the book "101 Basic Games" by David H. Ahl 1978
+*  This game was made by John Conway (University of Cambridge, England)
+*  Martin Gardner described this game in "Scientific American", October 1970
+
 Conway's genetic laws are delightfully simple. First note that each cell of the checkerboard
 (assumed to be an infinite plane) has eight neighboring cells, four adjacent orthogonally, four adjacent diagonally.
 The rules are:
@@ -19,7 +22,7 @@ The rules are:
    of the initial configuration
 */
 
-// Make menu   ... VERY Easy, just double click on Resorce File .rc and click on Menu. An IDE appears for adding to the menu.
+// To make the menu   ...  just double click on Resorce File .rc and click on Menu. An IDE appears for adding to the menu.
 
 
 #include "framework.h"
@@ -450,9 +453,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             RefreshWindow(hWnd);
             UpDateMenuCheck(hMenu, iMenuCELLSIZESelection, wmId);
             break;
-        case ID_SPEED_SLOW:
+        case ID_SPEED_SLOW40SEC:
             KillTimer(hWnd, TIMER_RAY1);
-            msWait = 8000;
+            msWait = 40000;
+            SetTimer(hWnd, TIMER_RAY1, msWait, NULL);
+            UpDateMenuCheck(hMenu, iMenuSPEEDSelection, wmId);
+            break;
+        case ID_SPEED_SLOW4SEC:
+            KillTimer(hWnd, TIMER_RAY1);
+            msWait = 4000;
+            SetTimer(hWnd, TIMER_RAY1, msWait, NULL);
+            UpDateMenuCheck(hMenu, iMenuSPEEDSelection, wmId);
+            break;
+        case ID_SPEED_SLOW2SEC:
+            KillTimer(hWnd, TIMER_RAY1);
+            msWait = 2000;
+            SetTimer(hWnd, TIMER_RAY1, msWait, NULL);
+            UpDateMenuCheck(hMenu, iMenuSPEEDSelection, wmId);
+            break;
+        case ID_SPEED_SLOW1SEC:
+            KillTimer(hWnd, TIMER_RAY1);
+            msWait = 1000;
             SetTimer(hWnd, TIMER_RAY1, msWait, NULL);
             UpDateMenuCheck(hMenu, iMenuSPEEDSelection, wmId);
             break;
